@@ -8,6 +8,8 @@ var pytanie;
 var punkty = 0;
 var podsumowanie;
 var ekranPowitalny;
+var dzwKoniecGry;
+var dzwWygrales;
 
 function mieszajDane() {
     var tab = new Array(dane.length);
@@ -59,29 +61,34 @@ var Pytanie = function(dobraOdpowiedz) {
     this.tlo = gra.add.sprite(40, 40, 'pytanie');
     this.tekst = gra.add.text(100, 80, dane[idPytania].pytanie);
     this.obiekt = gra.add.sprite(470, 160, 'obiekt');
+    this.pytajnik = gra.add.sprite(513, 160, 'pytajnik');
+    this.wynik = 0;
+    this.dzwDobra = gra.add.audio('dzw_dobra');
+    this.dzwZla = gra.add.audio('dzw_zla');
+
     this.ukryj = function() {
         this.tlo.visible = false;
         this.tekst.visible = false;
         this.obiekt.visible = false;
+        this.pytajnik.visible = false;
     }
-}
+    
+    this.zakoncz = function(czyDobraOdpowiedz) {
+        var tekst = '';
 
-var Wynik = function(jaki) {
-    this.tlo = gra.add.sprite(200, 200, 'odpowiedz_' + jaki);
-    this.wynik = 0;
-    var tekst = '';
-    
-    if (jaki === 'dobra') {
-        this.wynik++;
-        tekst = 'Dobra odpowiedź';
-    } else {
-        tekst = 'Zła odpowiedź';
+        if (czyDobraOdpowiedz) {
+            this.wynik++;
+            this.odpowiedz = gra.add.sprite(470, 160, 'odpowiedz_dobra');
+            this.dzwDobra.play();
+        } else {
+            this.odpowiedz = gra.add.sprite(470, 160, 'odpowiedz_zla');
+            this.dzwZla.play();
+        }
     }
-    this.tekst = gra.add.text(320, 240, tekst);
     
-    this.ukryj = function() {
-        this.tlo.visible = false;
-        this.tekst.visible = false;
+    this.nowe = function() {
+        this.odpowiedz.visible = false;
+        this.ukryj();
     }
 }
 
@@ -103,25 +110,29 @@ function wyswietlPytanie() {
 
     var tab = mieszaj(dane[idPytania].odpowiedzi);
     for (let i = 0; i < 4; i++) {
-        //odpowiedzi[i].anchor.setTo(0.5, 0.5);
         odpowiedzi[i] = new Przycisk(40, 160 + i*80, tab, i);
      }
 }
 
-function wygrales() {
+function zacznijGre() {
     podsumowanie.ukryj();
     ekranPowitalny = new EkranPowitalny();
+}
+
+function wygrales() {
+    dzwWygrales.play();
+    setTimeout(zacznijGre, 6000);
 }
 
 function przegrales() {
-    podsumowanie.ukryj();
-    ekranPowitalny = new EkranPowitalny();
+    dzwKoniecGry.play();
+    setTimeout(zacznijGre, 1500);
 }
 
 function nastepnePytanie() {
-    wynik.ukryj();
+    pytanie.nowe();
     
-    if (wynik.wynik == 0) {
+    if (pytanie.wynik == 0) {
         przegrales();
         return;
     }
@@ -138,10 +149,9 @@ function nastepnePytanie() {
     }
 }
 
-function wyswietlWynik(jaki) {
-    wynik = new Wynik(jaki);
-    
-    setTimeout(nastepnePytanie, 2000);
+function wyswietlOdpowiedz(czyDobraOdpowiedz) {
+    pytanie.zakoncz(czyDobraOdpowiedz);
+    setTimeout(nastepnePytanie, 1500);
 }
 
 function przedZaladowaniem() {
@@ -154,21 +164,25 @@ function przedZaladowaniem() {
     gra.load.image('ekran_powitalny', 'img/ekran_powitalny.png');
     gra.load.spritesheet('przycisk_start', 'img/przycisk_start.png', 200, 80);
     gra.load.image('obiekt', 'img/obiekt.png');
+    gra.load.image('pytajnik', 'img/pytajnik.png');
+
+    gra.load.audio('dzw_dobra', 'audio/odpowiedz_dobra.mp3');
+    gra.load.audio('dzw_zla', 'audio/odpowiedz_zla.mp3');
+    gra.load.audio('dzw_wygrales', 'audio/wygrales.mp3');
+    gra.load.audio('dzw_koniec_gry', 'audio/koniec_gry.mp3');
     
     dane = pobierzDane();
     mieszajDane();
 }
 
 function nacisnieto(przycisk) {
-    pytanie.ukryj();
-    
     for (var i = 0; i < odpowiedzi.length; i++) {
         odpowiedzi[i].ukryj();
     }
     if (pytanie.dobraOdpowiedz === przycisk.name) {
-        wyswietlWynik('dobra');
+        wyswietlOdpowiedz(true);
     } else {
-        wyswietlWynik('zla');
+        wyswietlOdpowiedz(false);
     }
 }
 
@@ -187,6 +201,8 @@ function mieszaj(tab) {
 function tworzenie() {
     gra.add.sprite(0, 0, 'tlo');
     ekranPowitalny = new EkranPowitalny();
+    dzwWygrales = gra.add.audio('dzw_wygrales');
+    dzwKoniecGry = gra.add.audio('dzw_koniec_gry');
 }
 
 function aktualizacja() {
