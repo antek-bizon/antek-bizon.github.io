@@ -46,7 +46,7 @@ var Przycisk = function(x, y, odpowiedzi, numerOdpowiedzi) {
     this.x = x;
     this.y = y;
     this.przycisk = gra.add.button(x, y, 'przycisk', nacisnieto, this, 0, 1, 2);
-    this.przycisk.name = odpowiedzi[numerOdpowiedzi].odpowiedz;
+    this.przycisk.name = odpowiedzi[numerOdpowiedzi].tekst;
     this.tekst = gra.add.text(x + 60, y + 20, this.przycisk.name);
 
     this.ukryj = function() {
@@ -60,8 +60,18 @@ var Pytanie = function(dobraOdpowiedz) {
     
     this.tlo = gra.add.sprite(40, 40, 'pytanie');
     this.tekst = gra.add.text(100, 80, dane[idPytania].pytanie);
-    this.obiekt = gra.add.sprite(470, 160, 'obiekt');
-    this.pytajnik = gra.add.sprite(513, 160, 'pytajnik');
+    this.obiekt_tlo = gra.add.sprite(470, 160, 'obiekt_tlo');
+
+    if (dane[idPytania].obrazek) {
+        var o = gra.cache.getImage('obiekt_tlo');
+        var n = gra.cache.getImage('obiekt' + idPytania);
+        var przesX = (o.width - n.width) / 2;
+        var przesY = (o.height - n.height) / 2
+        this.obiekt = gra.add.sprite(470 + przesX, 160 + przesY, ('obiekt' + idPytania));
+    } else {
+        this.obiekt = gra.add.sprite(513, 160, 'obiekt');
+    }
+
     this.wynik = 0;
     this.dzwDobra = gra.add.audio('dzw_dobra');
     this.dzwZla = gra.add.audio('dzw_zla');
@@ -69,8 +79,8 @@ var Pytanie = function(dobraOdpowiedz) {
     this.ukryj = function() {
         this.tlo.visible = false;
         this.tekst.visible = false;
+        this.obiekt_tlo.visible = false;
         this.obiekt.visible = false;
-        this.pytajnik.visible = false;
     }
     
     this.zakoncz = function(czyDobraOdpowiedz) {
@@ -106,7 +116,7 @@ var Podsumowanie = function() {
 }
 
 function wyswietlPytanie() {
-    pytanie = new Pytanie(dane[idPytania].odpowiedzi[0].odpowiedz);
+    pytanie = new Pytanie(dane[idPytania].odpowiedzi[0].tekst);
 
     var tab = mieszaj(dane[idPytania].odpowiedzi);
     for (let i = 0; i < 4; i++) {
@@ -163,8 +173,8 @@ function przedZaladowaniem() {
     gra.load.image('odpowiedz_zla', 'img/odpowiedz_zla.png');
     gra.load.image('ekran_powitalny', 'img/ekran_powitalny.png');
     gra.load.spritesheet('przycisk_start', 'img/przycisk_start.png', 200, 80);
-    gra.load.image('obiekt', 'img/obiekt.png');
-    gra.load.image('pytajnik', 'img/pytajnik.png');
+    gra.load.image('obiekt_tlo', 'img/obiekt.png');
+    gra.load.image('obiekt', 'img/pytajnik.png');
 
     gra.load.audio('dzw_dobra', 'audio/odpowiedz_dobra.mp3');
     gra.load.audio('dzw_zla', 'audio/odpowiedz_zla.mp3');
@@ -173,6 +183,13 @@ function przedZaladowaniem() {
     
     dane = pobierzDane();
     mieszajDane();
+
+    var i;
+    for (i = 0; i < dane.length; i++) {
+        if (dane[i].obrazek) {
+            gra.load.image('obiekt' + i, dane[i].obrazek);
+        }
+    }
 }
 
 function nacisnieto(przycisk) {

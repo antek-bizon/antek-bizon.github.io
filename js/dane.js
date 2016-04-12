@@ -1,25 +1,27 @@
 function pobierzDane() {
 return [
     {"pytanie":"Kto wynalazł żarówkę?", 
+     "obrazek":"img/pytania/zarowka.png",
      "odpowiedzi":[
-         {"odpowiedz":"Thomas Edison"},
-         {"odpowiedz":"Albert Einstein"},
-         {"odpowiedz":"Nikola Tesla"},
-         {"odpowiedz":"Robert Lewandowski"},
-    ]},
+         {"tekst":"Thomas Edison"},
+         {"tekst":"Albert Einstein"},
+         {"tekst":"Nikola Tesla"},
+         {"tekst":"Robert Lewandowski"}]
+    },
     {"pytanie":"W jakim kraju wynaleziono proch strzelniczy?", 
      "odpowiedzi":[
-         {"odpowiedz":"Chiny"},
-         {"odpowiedz":"Indie"},
-         {"odpowiedz":"Stany Zjednoczone"},
-         {"odpowiedz":"Polska"}
-    ]},
-    {"pytanie":"W którym roku skonstruowano lampę naftową?", 
+         {"tekst":"Chiny"},
+         {"tekst":"Indie"},
+         {"tekst":"Stany Zjednoczone"},
+         {"tekst":"Polska"}]
+    },
+    {"pytanie":"W którym roku skonstruowano lampę naftową?",
+     "obrazek":"img/pytania/lampa_naftowa.png",
      "odpowiedzi":[
-     {"odpowiedz":"1853"},
-     {"odpowiedz":"1801"},
-     {"odpowiedz":"1915"},
-     {"odpowiedz":"1945"}
-     ]}
+        {"tekst":"1853"},
+        {"tekst":"1801"},
+        {"tekst":"1915"},
+        {"tekst":"1945"}]
+    }
 ];
 }
