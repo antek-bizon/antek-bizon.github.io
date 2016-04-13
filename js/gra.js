@@ -14,6 +14,9 @@ var minutnik;
 var sekundy = 5;
 var stylTekstu = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 var stylTekstuDuzy = { font: "bold 42px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+var zwyciestwo;
+var koniecGry;
+
 
 function mieszajDane() {
     var tab = new Array(dane.length);
@@ -34,13 +37,13 @@ function nacisnietoStart() {
 }
 
 var EkranPowitalny = function() {
-    this.tlo = gra.add.sprite(150, 150, 'ekran_powitalny');
+    this.tlo = gra.add.sprite(200, 150, 'ekran_powitalny');
     this.tekst = gra.add.text(0, 0, 'Quiz Naukowy', stylTekstuDuzy);
     this.tekst.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
-    this.tekst.setTextBounds(150, 150, 400, 150);
-    this.przycisk = gra.add.button(250, 350, 'przycisk_start', nacisnietoStart, this, 0, 1, 2);
+    this.tekst.setTextBounds(200, 150, 400, 150);
+    this.przycisk = gra.add.button(300, 350, 'przycisk_start', nacisnietoStart, this, 0, 1, 2);
     this.przyciskTekst = gra.add.text(0, 0, 'Start', stylTekstu);
-    this.przyciskTekst.setTextBounds(250, 350, 200, 80);
+    this.przyciskTekst.setTextBounds(300, 350, 200, 80);
 
     this.ukryj = function() {
         this.tlo.visible = false;
@@ -155,17 +158,43 @@ function wyswietlPytanie() {
 
 function zacznijGre() {
     podsumowanie.ukryj();
+    if (zwyciestwo) zwyciestwo.ukryj();
+    if (koniecGry) koniecGry.ukryj();
     ekranPowitalny = new EkranPowitalny();
 }
 
-function wygrales() {
-    dzwWygrales.play();
+var Zwyciestwo = function() {
+    this.tlo = gra.add.image(300, 150, 'zwyciestwo');
+    this.tekst = gra.add.text(0, 0, 'Brawo!\nOdpowiedziałeś na wszystkie pytania', stylTekstu);
+    this.tekst.setTextBounds(300, 150, 400, 200);
     setTimeout(zacznijGre, 6000);
+    dzwWygrales.play();
+
+    this.ukryj = function() {
+        this.tlo.visible = false;
+        this.tekst.visible = false;
+    }
+}
+
+function wygrales() {
+    zwyciestwo = new Zwyciestwo();
+}
+
+var KoniecGry = function() {
+    this.tlo = gra.add.image(200, 150, 'koniec_gry');
+    this.tekst = gra.add.text(0, 0, 'Koniec gry', stylTekstu);
+    this.tekst.setTextBounds(200, 150, 400, 200);
+    setTimeout(zacznijGre, 1500);
+    dzwKoniecGry.play();
+
+    this.ukryj = function() {
+        this.tlo.visible = false;
+        this.tekst.visible = false;
+    }
 }
 
 function przegrales() {
-    dzwKoniecGry.play();
-    setTimeout(zacznijGre, 1500);
+    koniecGry = new KoniecGry();
 }
 
 function nastepnePytanie() {
@@ -204,6 +233,8 @@ function przedZaladowaniem() {
     gra.load.spritesheet('przycisk_start', 'img/przycisk_start.png', 200, 80);
     gra.load.image('obiekt_tlo', 'img/obiekt.png');
     gra.load.image('obiekt', 'img/pytajnik.png');
+    gra.load.image('zwyciestwo', 'img/zwyciestwo.png');
+    gra.load.image('koniec_gry', 'img/koniec_gry.png');
 
     gra.load.audio('dzw_dobra', 'audio/odpowiedz_dobra.mp3');
     gra.load.audio('dzw_zla', 'audio/odpowiedz_zla.mp3');
