@@ -14,8 +14,10 @@ var minutnik;
 var sekundy = 5;
 var stylTekstu = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 var stylTekstuDuzy = { font: "bold 42px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+var stylTekstuMaly = { font: "bold 10px Arial", fill: "#00", boundsAlignH: "center", boundsAlignV: "middle" };
 var zwyciestwo;
 var koniecGry;
+var sumaSekund = 0;
 
 
 function mieszajDane() {
@@ -41,15 +43,18 @@ var EkranPowitalny = function() {
     this.tekst = gra.add.text(0, 0, 'Quiz Naukowy', stylTekstuDuzy);
     this.tekst.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
     this.tekst.setTextBounds(200, 150, 400, 150);
-    this.przycisk = gra.add.button(300, 350, 'przycisk_start', nacisnietoStart, this, 0, 1, 2);
+    this.przycisk = gra.add.button(300, 300, 'przycisk_start', nacisnietoStart, this, 0, 1, 2);
     this.przyciskTekst = gra.add.text(0, 0, 'Start', stylTekstu);
-    this.przyciskTekst.setTextBounds(300, 350, 200, 80);
+    this.przyciskTekst.setTextBounds(300, 300, 200, 80);
+    this.podpis = gra.add.text(0, 0, 'Antoni Bizoń - Konkurs "Ambasador Wynalazczości" 2016', stylTekstuMaly);
+    this.podpis.setTextBounds(200, 400, 400, 80);
 
     this.ukryj = function() {
         this.tlo.visible = false;
         this.tekst.visible = false;
         this.przycisk.visible = false;
         this.przyciskTekst.visible = false;
+        this.podpis.visible = false;
     }
 }
 
@@ -136,10 +141,11 @@ var Pytanie = function(dobraOdpowiedz) {
 
 var Podsumowanie = function() {
     this.wynik = gra.add.sprite(0, 500, 'wynik');
-    this.tekst = gra.add.text(40, 540, 'Wynik: ' + punkty + '   ' + 'Pytanie: ' + (nrPytania + 1) + ' / ' + dane.length + ' Czas: ' + sekundy, stylTekstu);
-    
+    this.tekst = gra.add.text(0, 0, 'Wynik: ' + punkty + '        Pytanie: ' + (nrPytania + 1) + ' / ' + dane.length + '        Czas: ' + sekundy, stylTekstu);
+    this.tekst.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+    this.tekst.setTextBounds(0, 500, 800, 100);
     this.aktualizuj = function() {
-        this.tekst.text = 'Wynik: ' + punkty + '   ' + 'Pytanie: ' + (nrPytania + 1) + ' / ' + dane.length + ' Czas: ' + sekundy;
+        this.tekst.text = 'Wynik: ' + punkty + '        Pytanie: ' + (nrPytania + 1) + ' / ' + dane.length + '        Czas: ' + sekundy;
     }
     this.ukryj = function() {
         this.wynik.visible = false; 
@@ -164,11 +170,13 @@ function zacznijGre() {
 }
 
 var Zwyciestwo = function() {
-    this.tlo = gra.add.image(300, 150, 'zwyciestwo');
-    this.tekst = gra.add.text(0, 0, 'Brawo!\nOdpowiedziałeś na wszystkie pytania', stylTekstu);
-    this.tekst.setTextBounds(300, 150, 400, 200);
+    this.tlo = gra.add.image(100, 150, 'zwyciestwo');
+    this.tekst = gra.add.text(0, 0, 'Brawo!\nOdpowiedziałeś na wszystkie pytania\nw czasie: ' + sumaSekund + ' sekund', stylTekstu);
+    this.tekst.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+    this.tekst.setTextBounds(100, 150, 600, 200);
     setTimeout(zacznijGre, 6000);
     dzwWygrales.play();
+    sumaSekund = 0;
 
     this.ukryj = function() {
         this.tlo.visible = false;
@@ -183,6 +191,7 @@ function wygrales() {
 var KoniecGry = function() {
     this.tlo = gra.add.image(200, 150, 'koniec_gry');
     this.tekst = gra.add.text(0, 0, 'Koniec gry', stylTekstu);
+    this.tekst.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
     this.tekst.setTextBounds(200, 150, 400, 200);
     setTimeout(zacznijGre, 1500);
     dzwKoniecGry.play();
@@ -265,8 +274,8 @@ function mieszaj(tab) {
 }
 
 function aktualizujCzas() {
-    sekundy -= 1;
-
+    sekundy--;
+    sumaSekund++;
     podsumowanie.aktualizuj();
 
     if (sekundy <= 0) {
