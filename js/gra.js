@@ -111,8 +111,6 @@ var Pytanie = function(dobraOdpowiedz) {
     sekundy = 5;
     minutnik.start();
 
-    console.log('Minutnik start');
-
     this.ukryj = function() {
         this.tlo.visible = false;
         this.tekst.visible = false;
