@@ -13,6 +13,7 @@ var dzwWygrales;
 var minutnik;
 var sekundy = 5;
 var stylTekstu = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+var stylTekstuDuzy = { font: "bold 42px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 
 function mieszajDane() {
     var tab = new Array(dane.length);
@@ -34,11 +35,12 @@ function nacisnietoStart() {
 
 var EkranPowitalny = function() {
     this.tlo = gra.add.sprite(150, 150, 'ekran_powitalny');
-    this.tekst = gra.add.text(200, 180, 'Quiz Naukowy', stylTekstu);
+    this.tekst = gra.add.text(0, 0, 'Quiz Naukowy', stylTekstuDuzy);
     this.tekst.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
-    this.tekst.setTextBounds(150, 150, 400, 100);
-    this.przycisk = gra.add.button(350, 350, 'przycisk_start', nacisnietoStart, this, 0, 0, 0);
-    this.przyciskTekst = gra.add.text(360, 360, 'Start', stylTekstu);
+    this.tekst.setTextBounds(150, 150, 400, 150);
+    this.przycisk = gra.add.button(250, 350, 'przycisk_start', nacisnietoStart, this, 0, 1, 2);
+    this.przyciskTekst = gra.add.text(0, 0, 'Start', stylTekstu);
+    this.przyciskTekst.setTextBounds(250, 350, 200, 80);
 
     this.ukryj = function() {
         this.tlo.visible = false;
@@ -66,7 +68,8 @@ var Przycisk = function(x, y, odpowiedzi, numerOdpowiedzi) {
     this.y = y;
     this.przycisk = gra.add.button(x, y, 'przycisk', nacisnietoPrzycisk, this, 0, 1, 2);
     this.przycisk.name = odpowiedzi[numerOdpowiedzi].tekst;
-    this.tekst = gra.add.text(x + 60, y + 20, this.przycisk.name, stylTekstu);
+    this.tekst = gra.add.text(0, 0, this.przycisk.name, stylTekstu);
+    this.tekst.setTextBounds(x, y, 400, 60);
 
     this.ukryj = function() {
         this.przycisk.visible = false;
@@ -78,7 +81,9 @@ var Pytanie = function(dobraOdpowiedz) {
     this.dobraOdpowiedz = dobraOdpowiedz;
     
     this.tlo = gra.add.sprite(40, 40, 'pytanie');
-    this.tekst = gra.add.text(100, 80, dane[idPytania].pytanie, stylTekstu);
+    this.tekst = gra.add.text(0, 0, dane[idPytania].pytanie, stylTekstu);
+    this.tekst.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+    this.tekst.setTextBounds(40, 40, 720, 100);
     this.obiekt_tlo = gra.add.sprite(470, 160, 'obiekt_tlo');
 
     if (dane[idPytania].obrazek) {
