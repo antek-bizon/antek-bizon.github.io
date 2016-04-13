@@ -10,6 +10,9 @@ var podsumowanie;
 var ekranPowitalny;
 var dzwKoniecGry;
 var dzwWygrales;
+var minutnik;
+var sekundy = 5;
+var stylTekstu = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 
 function mieszajDane() {
     var tab = new Array(dane.length);
@@ -31,9 +34,12 @@ function nacisnietoStart() {
 
 var EkranPowitalny = function() {
     this.tlo = gra.add.sprite(150, 150, 'ekran_powitalny');
-    this.tekst = gra.add.text(200, 180, 'Quiz Naukowy');
+    this.tekst = gra.add.text(200, 180, 'Quiz Naukowy', stylTekstu);
+    this.tekst.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+    this.tekst.setTextBounds(150, 150, 400, 100);
     this.przycisk = gra.add.button(350, 350, 'przycisk_start', nacisnietoStart, this, 0, 0, 0);
-    this.przyciskTekst = gra.add.text(360, 360, 'Start');
+    this.przyciskTekst = gra.add.text(360, 360, 'Start', stylTekstu);
+
     this.ukryj = function() {
         this.tlo.visible = false;
         this.tekst.visible = false;
@@ -42,12 +48,25 @@ var EkranPowitalny = function() {
     }
 }
 
+function zakonczPytanie(czyDobraOdpowiedz) {
+    minutnik.stop(false);
+
+    for (var i = 0; i < odpowiedzi.length; i++) {
+        odpowiedzi[i].ukryj();
+    }
+    wyswietlOdpowiedz(czyDobraOdpowiedz);
+}
+
+function nacisnietoPrzycisk(przycisk) {
+    zakonczPytanie(pytanie.dobraOdpowiedz === przycisk.name);
+}
+
 var Przycisk = function(x, y, odpowiedzi, numerOdpowiedzi) {
     this.x = x;
     this.y = y;
-    this.przycisk = gra.add.button(x, y, 'przycisk', nacisnieto, this, 0, 1, 2);
+    this.przycisk = gra.add.button(x, y, 'przycisk', nacisnietoPrzycisk, this, 0, 1, 2);
     this.przycisk.name = odpowiedzi[numerOdpowiedzi].tekst;
-    this.tekst = gra.add.text(x + 60, y + 20, this.przycisk.name);
+    this.tekst = gra.add.text(x + 60, y + 20, this.przycisk.name, stylTekstu);
 
     this.ukryj = function() {
         this.przycisk.visible = false;
@@ -59,7 +78,7 @@ var Pytanie = function(dobraOdpowiedz) {
     this.dobraOdpowiedz = dobraOdpowiedz;
     
     this.tlo = gra.add.sprite(40, 40, 'pytanie');
-    this.tekst = gra.add.text(100, 80, dane[idPytania].pytanie);
+    this.tekst = gra.add.text(100, 80, dane[idPytania].pytanie, stylTekstu);
     this.obiekt_tlo = gra.add.sprite(470, 160, 'obiekt_tlo');
 
     if (dane[idPytania].obrazek) {
@@ -76,13 +95,18 @@ var Pytanie = function(dobraOdpowiedz) {
     this.dzwDobra = gra.add.audio('dzw_dobra');
     this.dzwZla = gra.add.audio('dzw_zla');
 
+    sekundy = 5;
+    minutnik.start();
+
+    console.log('Minutnik start');
+
     this.ukryj = function() {
         this.tlo.visible = false;
         this.tekst.visible = false;
         this.obiekt_tlo.visible = false;
         this.obiekt.visible = false;
     }
-    
+
     this.zakoncz = function(czyDobraOdpowiedz) {
         var tekst = '';
 
@@ -104,10 +128,10 @@ var Pytanie = function(dobraOdpowiedz) {
 
 var Podsumowanie = function() {
     this.wynik = gra.add.sprite(0, 500, 'wynik');
-    this.tekst = gra.add.text(40, 540, 'Wynik: ' + punkty + '   ' + 'Pytanie: ' + (nrPytania + 1) + ' / ' + dane.length);
+    this.tekst = gra.add.text(40, 540, 'Wynik: ' + punkty + '   ' + 'Pytanie: ' + (nrPytania + 1) + ' / ' + dane.length + ' Czas: ' + sekundy, stylTekstu);
     
     this.aktualizuj = function() {
-        this.tekst.text = 'Wynik: ' + punkty + '   ' + 'Pytanie: ' + (nrPytania + 1) + ' / ' + dane.length;
+        this.tekst.text = 'Wynik: ' + punkty + '   ' + 'Pytanie: ' + (nrPytania + 1) + ' / ' + dane.length + ' Czas: ' + sekundy;
     }
     this.ukryj = function() {
         this.wynik.visible = false; 
@@ -121,7 +145,7 @@ function wyswietlPytanie() {
     var tab = mieszaj(dane[idPytania].odpowiedzi);
     for (let i = 0; i < 4; i++) {
         odpowiedzi[i] = new Przycisk(40, 160 + i*80, tab, i);
-     }
+    }
 }
 
 function zacznijGre() {
@@ -192,17 +216,6 @@ function przedZaladowaniem() {
     }
 }
 
-function nacisnieto(przycisk) {
-    for (var i = 0; i < odpowiedzi.length; i++) {
-        odpowiedzi[i].ukryj();
-    }
-    if (pytanie.dobraOdpowiedz === przycisk.name) {
-        wyswietlOdpowiedz(true);
-    } else {
-        wyswietlOdpowiedz(false);
-    }
-}
-
 function mieszaj(tab) {
     var j, x, i;
     var nowaTab = tab.slice();
@@ -215,11 +228,25 @@ function mieszaj(tab) {
     return nowaTab;
 }
 
+function aktualizujCzas() {
+    sekundy -= 1;
+
+    podsumowanie.aktualizuj();
+
+    if (sekundy <= 0) {
+        zakonczPytanie(false);
+    }
+}
+
 function tworzenie() {
+
     gra.add.sprite(0, 0, 'tlo');
     ekranPowitalny = new EkranPowitalny();
     dzwWygrales = gra.add.audio('dzw_wygrales');
     dzwKoniecGry = gra.add.audio('dzw_koniec_gry');
+
+    minutnik = gra.time.create(false);
+    minutnik.loop(1000, aktualizujCzas, this);
 }
 
 function aktualizacja() {
@@ -227,5 +254,5 @@ function aktualizacja() {
 }
 
 function rozpocznijGre() {
-    gra = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: przedZaladowaniem, create: tworzenie, update: aktualizacja });    
+    gra = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: przedZaladowaniem, create: tworzenie, update: aktualizacja });
 }
