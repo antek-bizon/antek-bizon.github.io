@@ -14,7 +14,7 @@ var minutnik;
 var sekundy = 5;
 var stylTekstu = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 var stylTekstuDuzy = { font: "bold 42px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
-//var stylTekstuDuzy = { font: "bold 42px Revalia", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+var stylPytania = { font: "bold 30px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 var stylTekstuMaly = { font: "bold 10px Arial", fill: "#00", boundsAlignH: "center", boundsAlignV: "middle" };
 var zwyciestwo;
 var koniecGry;
@@ -97,7 +97,7 @@ var Pytanie = function(dobraOdpowiedz) {
     this.dobraOdpowiedz = dobraOdpowiedz;
     
     this.tlo = gra.add.sprite(40, 40, 'pytanie');
-    this.tekst = gra.add.text(0, 0, dane[idPytania].pytanie, stylTekstu);
+    this.tekst = gra.add.text(0, 0, dane[idPytania].pytanie, stylPytania);
     this.tekst.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
     this.tekst.setTextBounds(40, 40, 720, 100);
     this.obiekt_tlo = gra.add.sprite(470, 160, 'obiekt_tlo');
@@ -177,7 +177,7 @@ function zacznijGre() {
 
 var Zwyciestwo = function() {
     this.tlo = gra.add.image(100, 150, 'zwyciestwo');
-    this.tekst = gra.add.text(0, 0, 'Brawo!\nOdpowiedziałeś na wszystkie pytania\nw czasie: ' + sumaSekund + ' sekund', stylTekstu);
+    this.tekst = gra.add.text(0, 0, 'Brawo! W czasie: ' + sumaSekund + ' sekund\n' + 'Odpowiedziałeś na wszystkie pytania', stylTekstu);
     this.tekst.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
     this.tekst.setTextBounds(100, 150, 600, 200);
     setTimeout(zacznijGre, 6000);
@@ -238,8 +238,6 @@ function wyswietlOdpowiedz(czyDobraOdpowiedz) {
 }
 
 function przedZaladowaniem() {
-    //gra.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
-
     gra.load.image('tlo', 'img/tlo.jpg');
     gra.load.image('pytanie', 'img/napis_duzy.png');
     gra.load.spritesheet('przycisk', 'img/przycisk.png', 400, 60);
