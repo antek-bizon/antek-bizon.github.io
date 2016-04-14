@@ -14,11 +14,16 @@ var minutnik;
 var sekundy = 5;
 var stylTekstu = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 var stylTekstuDuzy = { font: "bold 42px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+//var stylTekstuDuzy = { font: "bold 42px Revalia", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 var stylTekstuMaly = { font: "bold 10px Arial", fill: "#00", boundsAlignH: "center", boundsAlignV: "middle" };
 var zwyciestwo;
 var koniecGry;
 var sumaSekund = 0;
 
+WebFontConfig = {
+    active: function() { },
+    google: { families: ['Revalia'] }
+};
 
 function mieszajDane() {
     var tab = new Array(dane.length);
@@ -43,11 +48,14 @@ var EkranPowitalny = function() {
     this.tekst = gra.add.text(0, 0, 'Quiz Naukowy', stylTekstuDuzy);
     this.tekst.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
     this.tekst.setTextBounds(200, 150, 400, 150);
+
     this.przycisk = gra.add.button(300, 300, 'przycisk_start', nacisnietoStart, this, 0, 1, 2);
     this.przyciskTekst = gra.add.text(0, 0, 'Start', stylTekstu);
     this.przyciskTekst.setTextBounds(300, 300, 200, 80);
-    this.podpis = gra.add.text(0, 0, 'Antoni Bizoń - Konkurs "Ambasador Wynalazczości" 2016', stylTekstuMaly);
+    this.podpis = gra.add.text(0, 0, 'Antoni Bizoń - Konkurs "Ambasador Szkolnek Wynalazczości" 2016', stylTekstuMaly);
     this.podpis.setTextBounds(200, 400, 400, 80);
+
+    //gra.physics.enable( [ this.tlo, this.tekst, this.przycisk, this.przyciskTekst, this.podpis ], Phaser.Physics.ARCADE);
 
     this.ukryj = function() {
         this.tlo.visible = false;
@@ -230,6 +238,8 @@ function wyswietlOdpowiedz(czyDobraOdpowiedz) {
 }
 
 function przedZaladowaniem() {
+    //gra.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+
     gra.load.image('tlo', 'img/tlo.jpg');
     gra.load.image('pytanie', 'img/napis_duzy.png');
     gra.load.spritesheet('przycisk', 'img/przycisk.png', 400, 60);
@@ -290,6 +300,9 @@ function tworzenie() {
 
     minutnik = gra.time.create(false);
     minutnik.loop(1000, aktualizujCzas, this);
+
+    gra.physics.startSystem(Phaser.Physics.ARCADE);
+    gra.physics.arcade.gravity.y = 100;
 }
 
 function aktualizacja() {
